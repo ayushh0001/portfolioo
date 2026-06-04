@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>const Ayush = {}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-brand" onclick="showPage('home')">const Ayush = {}</div>
+    <div class="nav-links">
+      <a onclick="showPage('home')" class="nav-link active" data-page="home"><span class="nav-num">01.</span> Root</a>
+      <a onclick="showPage('about')" class="nav-link" data-page="about"><span class="nav-num">02.</span> About</a>
+      <a onclick="showPage('repos')" class="nav-link" data-page="repos"><span class="nav-num">03.</span> Repos</a>
+      <a onclick="showPage('ping')" class="nav-link" data-page="ping"><span class="nav-num">04.</span> Ping</a>
+      <a onclick="showPage('admin-login')" class="nav-admin"><span>⚙</span> Admin</a>
+    </div>
+  </nav>
+
+  <!-- PAGE: HOME -->
+  <div id="page-home" class="page active">
+    <div class="terminal-window">
+      <div class="terminal-bar">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="terminal-title">bash — 80×24</span>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-line"><span class="path">~/portfolio</span> <span class="cmd">git checkout main</span></div>
+        <div class="terminal-line comment">// Initializing developer profile...</div>
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1>Hello World,<br>I am <span class="accent" id="hero-name">Ayush</span></h1>
+            <p class="hero-sub" id="hero-tagline">A full-stack web developer focused on building clean, performant, and developer-friendly digital experiences.</p>
+            <div class="hero-btns">
+              <button class="btn-primary" onclick="showPage('repos')">View Projects</button>
+              <button class="btn-ghost" onclick="showPage('ping')">Contact Me</button>
+              <button class="btn-admin-link" onclick="showPage('admin-login')">⚙ Admin</button>
+            </div>
+          </div>
+          <div class="hero-avatar">
+            <img src="developer.png" alt="Ayush" id="hero-avatar-img" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="page-footer">// built by <span class="accent">Ayush</span> — 2026 — <span class="keyword">const</span> passion = <span class="bool">true</span>;</footer>
+  </div>
+
+  <!-- PAGE: ABOUT -->
+  <div id="page-about" class="page">
+    <div class="page-content">
+      <div class="page-header">
+        <div class="page-comment">// who_am_i</div>
+        <h2>About Me</h2>
+        <div class="header-line"></div>
+      </div>
+      <div class="about-grid">
+        <div class="about-bio">
+          <div id="about-bio-text"></div>
+          <div class="about-links">
+            <a id="about-github-link" href="#" target="_blank" class="link-badge github-badge">🐙 GitHub</a>
+            <a id="about-linkedin-link" href="#" target="_blank" class="link-badge linkedin-badge">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="skills-grid" id="skills-grid"></div>
+      </div>
+    </div>
+    <footer class="page-footer">// built by <span class="accent">Ayush</span> — 2026 — <span class="keyword">const</span> passion = <span class="bool">true</span>;</footer>
+  </div>
+
+  <!-- PAGE: REPOS -->
+  <div id="page-repos" class="page">
+    <div class="page-content">
+      <div class="page-header">
+        <div class="page-comment">// git_log --all</div>
+        <h2>Projects</h2>
+        <div class="header-line"></div>
+      </div>
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn active" onclick="filterProjects('all', this)">All</button>
+      </div>
+      <div class="projects-grid" id="projects-grid"></div>
+    </div>
+    <footer class="page-footer">// built by <span class="accent">Ayush</span> — 2026 — <span class="keyword">const</span> passion = <span class="bool">true</span>;</footer>
+  </div>
+
+  <!-- PAGE: PING (CONTACT) -->
+  <div id="page-ping" class="page">
+    <div class="page-content">
+      <div class="page-header">
+        <div class="page-comment">// send_message()</div>
+        <h2>Contact</h2>
+        <div class="header-line"></div>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p>Got a project in mind, a question, or just want to say hi? Drop me a message and I'll get back to you.</p>
+          <div class="contact-links">
+            <div class="contact-item"><span class="contact-icon">✉</span> <a id="contact-email" href="#">ayushkumarsingh8596@gmail.com</a></div>
+            <div class="contact-item"><span class="contact-icon">🐙</span> <a id="contact-github" href="#" target="_blank">https://github.com/ayushh0001</a></div>
+            <div class="contact-item"><span class="contact-icon">💼</span> <a id="contact-linkedin" href="#" target="_blank">linkedin.com/in/ayush-kumar-singh</a></div>
+          </div>
+        </div>
+        <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="04c49a48-0a4e-4952-8e01-44b9c72d9455" />
+          <div class="form-group">
+            <label>name</label>
+            <input type="text" name="name" placeholder="Your name" required />
+          </div>
+          <div class="form-group">
+            <label>email</label>
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>message</label>
+            <textarea name="message" placeholder="// write your message here..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary full-width">→ Send Message</button>
+        </form>
+      </div>
+    </div>
+    <footer class="page-footer">// built by <span class="accent">Ayush</span> — 2026 — <span class="keyword">const</span> passion = <span class="bool">true</span>;</footer>
+  </div>
+
+  <!-- PAGE: ADMIN LOGIN -->
+  <div id="page-admin-login" class="page">
+    <div class="login-container">
+      <div class="terminal-bar">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="terminal-title">admin — login</span>
+      </div>
+      <div class="login-body">
+        <div class="page-comment">// sudo access</div>
+        <h2>Admin Login</h2>
+        <div id="login-error" class="login-error hidden"></div>
+        <div class="form-group">
+          <label>username</label>
+          <input type="text" id="login-user" value="admin" />
+        </div>
+        <div class="form-group">
+          <label>password</label>
+          <input type="password" id="login-pass" placeholder="••••••••" />
+        </div>
+        <button class="btn-primary full-width" onclick="doLogin()">→ Login</button>
+        <div class="login-back"><a onclick="showPage('home')">← Back to portfolio</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: ADMIN PANEL -->
+  <div id="page-admin" class="page">
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="admin-brand">const Admin = {}</div>
+        <nav class="admin-nav">
+          <a onclick="showAdminTab('profile')" class="admin-nav-item active" data-tab="profile">👤 Profile</a>
+          <a onclick="showAdminTab('projects')" class="admin-nav-item" data-tab="projects">📁 Projects</a>
+          <a onclick="showAdminTab('skills')" class="admin-nav-item" data-tab="skills">✱ Skills</a>
+        </nav>
+        <div class="admin-sidebar-bottom">
+          <a onclick="showPage('home')" class="sidebar-link">← Portfolio</a>
+          <a onclick="doLogout()" class="sidebar-logout">Logout</a>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <!-- PROFILE TAB -->
+        <div id="tab-profile" class="admin-tab active">
+          <h2>Profile</h2>
+          <div class="admin-card">
+            <div class="card-title">🟢 Profile Photo</div>
+            <div class="avatar-preview-wrap">
+              <img id="admin-avatar-preview" src="developer.png" class="avatar-preview" alt="avatar" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>upload new photo (jpg/png/webp, max 5MB)</label>
+                <input type="file" id="avatar-file" accept="image/*" onchange="previewAvatar(this)" />
+              </div>
+              <div class="form-group">
+                <label>or paste image URL</label>
+                <input type="text" id="avatar-url" placeholder="https://..." />
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-title">📄 Resume</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>upload PDF (max 5MB)</label>
+                <input type="file" id="resume-file" accept=".pdf" onchange="handleResumeUpload(this)" />
+              </div>
+              <div class="form-group">
+                <label>or paste resume URL</label>
+                <input type="text" id="resume-url" placeholder="https://..." />
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-title">✏️ Basic Info</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>name</label>
+                <input type="text" id="profile-name" placeholder="Ayush" />
+              </div>
+              <div class="form-group">
+                <label>email</label>
+                <input type="text" id="profile-email" placeholder="you@example.com" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>tagline (hero subtitle)</label>
+              <input type="text" id="profile-tagline" placeholder="A full-stack developer..." />
+            </div>
+            <div class="form-group">
+              <label>bio (one paragraph per line)</label>
+              <textarea id="profile-bio" rows="5" placeholder="Hey, I'm Ayush..."></textarea>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-title">🔗 Links</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>GitHub URL</label>
+                <input type="text" id="profile-github" placeholder="https://github.com/..." />
+              </div>
+              <div class="form-group">
+                <label>LinkedIn URL</label>
+                <input type="text" id="profile-linkedin" placeholder="https://linkedin.com/in/..." />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Twitter / X URL</label>
+                <input type="text" id="profile-twitter" placeholder="https://twitter.com/username" />
+              </div>
+              <div class="form-group">
+                <label>Personal Website</label>
+                <input type="text" id="profile-website" placeholder="https://yoursite.com" />
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary full-width" onclick="saveProfile()">💾 Save Profile</button>
+          <div id="profile-saved-msg" class="save-msg hidden">✓ Profile saved successfully</div>
+        </div>
+
+        <!-- PROJECTS TAB -->
+        <div id="tab-projects" class="admin-tab">
+          <h2>Projects</h2>
+          <div class="admin-card">
+            <div class="card-title">+ Add Project</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>title</label>
+                <input type="text" id="proj-title" placeholder="My Project" />
+              </div>
+              <div class="form-group">
+                <label>link</label>
+                <input type="text" id="proj-link" placeholder="https://github.com/..." />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>description</label>
+              <textarea id="proj-desc" rows="4" placeholder="Project description..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>tech (comma-separated)</label>
+              <input type="text" id="proj-tech" placeholder="React.js, Node.js, PostgreSQL" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>upload image</label>
+                <input type="file" id="proj-img-file" accept="image/*" onchange="previewProjectImg(this)" />
+              </div>
+              <div class="form-group">
+                <label>or image URL</label>
+                <input type="text" id="proj-img-url" placeholder="https://..." />
+              </div>
+            </div>
+            <div id="proj-img-preview-wrap" class="hidden">
+              <img id="proj-img-preview" src="" alt="preview" style="max-height:120px;border-radius:6px;margin-top:8px;" />
+            </div>
+            <button class="btn-primary full-width" onclick="addProject()">Add Project</button>
+          </div>
+          <div id="admin-projects-list"></div>
+        </div>
+
+        <!-- SKILLS TAB -->
+        <div id="tab-skills" class="admin-tab">
+          <h2>Skill Categories</h2>
+          <div class="admin-card">
+            <div class="card-title">+ Add Skill Category</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>icon (emoji)</label>
+                <input type="text" id="skill-icon" placeholder="⚙" style="max-width:80px;" />
+              </div>
+              <div class="form-group">
+                <label>title</label>
+                <input type="text" id="skill-title" placeholder="Backend" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>items (comma-separated)</label>
+              <input type="text" id="skill-items" placeholder="PHP, MySQL, REST APIs" />
+            </div>
+            <button class="btn-primary full-width" onclick="addSkillCategory()">Add Category</button>
+          </div>
+          <div id="admin-skills-list"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
