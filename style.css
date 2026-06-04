@@ -779,6 +779,13 @@ body {
 .bool    { color: var(--green); }
 .hidden  { display: none !important; }
 
+.loading-msg {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 20px 0;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   #navbar { padding: 0 16px; }
