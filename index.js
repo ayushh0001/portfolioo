@@ -223,11 +223,14 @@ function previewAvatar(input) {
 }
 
 async function saveProfile() {
-  const bioRaw    = document.getElementById('profile-bio').value;
+  const bioRaw     = document.getElementById('profile-bio').value;
   const avatarFile = document.getElementById('avatar-file');
   const resumeFile = document.getElementById('resume-file');
   const avatarUrl  = document.getElementById('avatar-url').value.trim();
   const resumeUrl  = document.getElementById('resume-url').value.trim();
+
+  const btn = document.querySelector('#tab-profile .btn-primary');
+  btn.textContent = 'Saving...'; btn.disabled = true;
 
   const updated = {
     name:     document.getElementById('profile-name').value.trim(),
@@ -238,28 +241,20 @@ async function saveProfile() {
     linkedin: document.getElementById('profile-linkedin').value.trim(),
     twitter:  document.getElementById('profile-twitter').value.trim(),
     website:  document.getElementById('profile-website').value.trim(),
-    avatar:   avatarUrl || undefined,
-    resume:   resumeUrl || undefined,
   };
 
-  // handle avatar file → base64
-  const readFile = (file) => new Promise(res => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result);
-    r.readAsDataURL(file);
-  });
-
   if (avatarFile.files && avatarFile.files[0]) {
-    updated.avatar = await readFile(avatarFile.files[0]);
-  }
-  if (resumeFile.files && resumeFile.files[0]) {
-    updated.resume = await readFile(resumeFile.files[0]);
+    const url = await uploadImageToStorage(avatarFile.files[0]);
+    if (url) updated.avatar = url;
+  } else if (avatarUrl) {
+    updated.avatar = avatarUrl;
   }
 
-  // remove undefined keys
-  Object.keys(updated).forEach(k => updated[k] === undefined && delete updated[k]);
+  if (resumeUrl) updated.resume = resumeUrl;
 
   const { error } = await sb.from('profile').update(updated).eq('id', 1);
+  btn.textContent = '💾 Save Profile'; btn.disabled = false;
+
   const msg = document.getElementById('profile-saved-msg');
   if (error) {
     msg.textContent = '✗ Error: ' + error.message;
@@ -273,39 +268,54 @@ async function saveProfile() {
   setTimeout(() => msg.classList.add('hidden'), 3000);
 }
 
+// ===== IMAGE UPLOAD TO SUPABASE STORAGE =====
+async function uploadImageToStorage(file) {
+  const ext = file.name.split('.').pop();
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { data, error } = await sb.storage.from('project-images').upload(fileName, file, {
+    cacheControl: '3600',
+    upsert: false
+  });
+  if (error) { alert('Image upload failed: ' + error.message); return null; }
+  const { data: urlData } = sb.storage.from('project-images').getPublicUrl(fileName);
+  return urlData.publicUrl;
+}
+
 // ===== PROJECTS ADMIN =====
 function previewProjectImg(input) {
   if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById('proj-img-preview').src = e.target.result;
-      document.getElementById('proj-img-preview-wrap').classList.remove('hidden');
-      document.getElementById('proj-img-url').value = '';
-    };
-    reader.readAsDataURL(input.files[0]);
+    const url = URL.createObjectURL(input.files[0]);
+    document.getElementById('proj-img-preview').src = url;
+    document.getElementById('proj-img-preview-wrap').classList.remove('hidden');
+    document.getElementById('proj-img-url').value = '';
   }
 }
 
 async function addProject() {
-  const title  = document.getElementById('proj-title').value.trim();
-  const link   = document.getElementById('proj-link').value.trim();
-  const desc   = document.getElementById('proj-desc').value.trim();
-  const tech   = document.getElementById('proj-tech').value.split(',').map(t => t.trim()).filter(Boolean);
-  const imgUrl = document.getElementById('proj-img-url').value.trim();
+  const title   = document.getElementById('proj-title').value.trim();
+  const link    = document.getElementById('proj-link').value.trim();
+  const desc    = document.getElementById('proj-desc').value.trim();
+  const tech    = document.getElementById('proj-tech').value.split(',').map(t => t.trim()).filter(Boolean);
+  const imgUrl  = document.getElementById('proj-img-url').value.trim();
   const imgFile = document.getElementById('proj-img-file');
 
   if (!title) return alert('Project title is required.');
 
+  // show saving state
+  const btn = document.querySelector('#tab-projects .btn-primary');
+  const origText = btn.textContent;
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
   let img = imgUrl || null;
   if (imgFile.files && imgFile.files[0]) {
-    img = await new Promise(res => {
-      const r = new FileReader();
-      r.onload = e => res(e.target.result);
-      r.readAsDataURL(imgFile.files[0]);
-    });
+    img = await uploadImageToStorage(imgFile.files[0]);
+    if (!img) { btn.textContent = origText; btn.disabled = false; return; }
   }
 
   const { error } = await sb.from('projects').insert({ title, link, description: desc, tech, img });
+  btn.textContent = origText;
+  btn.disabled = false;
   if (error) return alert('Error adding project: ' + error.message);
 
   clearProjectForm();
@@ -337,26 +347,28 @@ function toggleProjectEdit(id) {
 }
 
 async function saveProject(id) {
-  const title  = document.getElementById(`ep-title-${id}`).value.trim();
-  const link   = document.getElementById(`ep-link-${id}`).value.trim();
-  const desc   = document.getElementById(`ep-desc-${id}`).value.trim();
-  const tech   = document.getElementById(`ep-tech-${id}`).value.split(',').map(t => t.trim()).filter(Boolean);
-  const imgUrl = document.getElementById(`ep-img-url-${id}`).value.trim();
+  const title   = document.getElementById(`ep-title-${id}`).value.trim();
+  const link    = document.getElementById(`ep-link-${id}`).value.trim();
+  const desc    = document.getElementById(`ep-desc-${id}`).value.trim();
+  const tech    = document.getElementById(`ep-tech-${id}`).value.split(',').map(t => t.trim()).filter(Boolean);
+  const imgUrl  = document.getElementById(`ep-img-url-${id}`).value.trim();
   const imgFile = document.getElementById(`ep-img-file-${id}`);
 
   if (!title) return alert('Title is required.');
 
+  const btn = document.querySelector(`#proj-edit-${id} .btn-save`);
+  btn.textContent = 'Saving...'; btn.disabled = true;
+
   const updates = { title, link, description: desc, tech };
   if (imgUrl) updates.img = imgUrl;
   if (imgFile.files && imgFile.files[0]) {
-    updates.img = await new Promise(res => {
-      const r = new FileReader();
-      r.onload = e => res(e.target.result);
-      r.readAsDataURL(imgFile.files[0]);
-    });
+    const uploaded = await uploadImageToStorage(imgFile.files[0]);
+    if (!uploaded) { btn.textContent = '💾 Save'; btn.disabled = false; return; }
+    updates.img = uploaded;
   }
 
   const { error } = await sb.from('projects').update(updates).eq('id', id);
+  btn.textContent = '💾 Save'; btn.disabled = false;
   if (error) return alert('Error: ' + error.message);
   await renderAdminProjects();
 }
