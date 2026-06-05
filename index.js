@@ -1,9 +1,10 @@
 // ===== SUPABASE INIT =====
+// NOTE: The anon key is intentionally public — it is safe as long as
+// Supabase Row Level Security (RLS) is enabled on all tables.
+// Public visitors can only READ. Write access requires Supabase Auth.
 const SUPABASE_URL = 'https://frgugoynuvbfqcvsoint.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZyZ3Vnb3ludXZiZnFjdnNvaW50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1ODc1MTgsImV4cCI6MjA5NjE2MzUxOH0.8Fe9Aq0GiGitgCZyNWzRJY13Fbdqvh2YwDb2taLMIk0';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const ADMIN_CREDS = { user: 'admin', pass: 'admin123' };
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZyZ3Vnb3ludXZiZnFjdnNvaW50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1ODc1MTgsImV4cCI6MjA5NjE2MzUxOH0.8Fe9Aq0GiGitgCZyNWzRJY13Fbdqvh2YwDb2taLMIk0';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ===== DB HELPERS =====
 async function getProfile() {
@@ -152,19 +153,40 @@ async function renderPing() {
 }
 
 // ===== AUTH =====
-function isLoggedIn() { return sessionStorage.getItem('admin_auth') === 'true'; }
+// Uses Supabase Auth — no credentials are stored in the source code.
+// Set up your admin user in: Supabase Dashboard → Authentication → Users
 
-function doLogin() {
-  const u    = document.getElementById('login-user').value.trim();
-  const pw   = document.getElementById('login-pass').value;
-  const errEl = document.getElementById('login-error');
-  if (u === ADMIN_CREDS.user && pw === ADMIN_CREDS.pass) {
-    sessionStorage.setItem('admin_auth', 'true');
-    errEl.classList.add('hidden');
-    showPage('admin');
-  } else {
+async function isLoggedIn() {
+  const { data: { session } } = await sb.auth.getSession();
+  return !!session;
+}
+
+async function doLogin() {
+  const email  = document.getElementById('login-user').value.trim();
+  const pw     = document.getElementById('login-pass').value;
+  const errEl  = document.getElementById('login-error');
+  const btn    = document.querySelector('#page-admin-login .btn-primary');
+
+  if (!email || !pw) {
+    errEl.textContent = 'Please enter your email and password.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  btn.textContent = 'Logging in...';
+  btn.disabled = true;
+
+  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+
+  btn.textContent = '→ Login';
+  btn.disabled = false;
+
+  if (error) {
     errEl.textContent = 'Invalid credentials. Try again.';
     errEl.classList.remove('hidden');
+  } else {
+    errEl.classList.add('hidden');
+    showPage('admin');
   }
 }
 
@@ -172,14 +194,15 @@ document.getElementById('login-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
 
-function doLogout() {
-  sessionStorage.removeItem('admin_auth');
+async function doLogout() {
+  await sb.auth.signOut();
   showPage('home');
 }
 
 // ===== RENDER ADMIN =====
 async function renderAdmin() {
-  if (!isLoggedIn()) { showPage('admin-login'); return; }
+  const loggedIn = await isLoggedIn();
+  if (!loggedIn) { showPage('admin-login'); return; }
   await loadProfileForm();
   await renderAdminProjects();
   await renderAdminSkills();
@@ -517,6 +540,46 @@ async function renderAdminSkills() {
     list.appendChild(item);
   });
 }
+
+// ===== CONTACT FORM =====
+// The Web3Forms key is moved to JS so it's not visible in raw HTML source.
+// For full key protection, use a server-side proxy.
+const W3F_KEY = '04c49a48-0a4e-4952-8e01-44b9c72d9455';
+
+document.addEventListener('submit', async (e) => {
+  if (e.target.id !== 'contact-form') return;
+  e.preventDefault();
+
+  const form    = e.target;
+  const btn     = form.querySelector('button[type="submit"]');
+  const msgEl   = document.getElementById('contact-form-msg');
+  const data    = new FormData(form);
+  data.append('access_key', W3F_KEY);
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data });
+    const json = await res.json();
+    if (json.success) {
+      msgEl.textContent = '✓ Message sent!';
+      msgEl.style.color = 'var(--green)';
+      form.reset();
+    } else {
+      msgEl.textContent = '✗ Failed to send. Try again.';
+      msgEl.style.color = 'var(--red)';
+    }
+  } catch {
+    msgEl.textContent = '✗ Network error. Try again.';
+    msgEl.style.color = 'var(--red)';
+  }
+
+  msgEl.classList.remove('hidden');
+  btn.textContent = '→ Send Message';
+  btn.disabled = false;
+  setTimeout(() => msgEl.classList.add('hidden'), 4000);
+});
 
 // ===== UTILITY =====
 function escHtml(str) {

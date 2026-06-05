@@ -20,7 +20,6 @@
       <a onclick="showPage('about')" class="nav-link" data-page="about"><span class="nav-num">02.</span> About</a>
       <a onclick="showPage('repos')" class="nav-link" data-page="repos"><span class="nav-num">03.</span> Repos</a>
       <a onclick="showPage('ping')" class="nav-link" data-page="ping"><span class="nav-num">04.</span> Ping</a>
-      <a onclick="showPage('admin-login')" class="nav-admin"><span>⚙</span> Admin</a>
     </div>
   </nav>
 
@@ -41,7 +40,6 @@
             <div class="hero-btns">
               <button class="btn-primary" onclick="showPage('repos')">View Projects</button>
               <button class="btn-ghost" onclick="showPage('ping')">Contact Me</button>
-              <button class="btn-admin-link" onclick="showPage('admin-login')">⚙ Admin</button>
             </div>
           </div>
           <div class="hero-avatar">
@@ -108,8 +106,7 @@
             <div class="contact-item"><span class="contact-icon">💼</span> <a id="contact-linkedin" href="#" target="_blank">linkedin.com/in/ayush-kumar-singh</a></div>
           </div>
         </div>
-        <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
-          <input type="hidden" name="access_key" value="04c49a48-0a4e-4952-8e01-44b9c72d9455" />
+        <form class="contact-form" id="contact-form">
           <div class="form-group">
             <label>name</label>
             <input type="text" name="name" placeholder="Your name" required />
@@ -123,6 +120,7 @@
             <textarea name="message" placeholder="// write your message here..." required></textarea>
           </div>
           <button type="submit" class="btn-primary full-width">→ Send Message</button>
+          <div id="contact-form-msg" class="save-msg hidden"></div>
         </form>
       </div>
     </div>
@@ -141,12 +139,12 @@
         <h2>Admin Login</h2>
         <div id="login-error" class="login-error hidden"></div>
         <div class="form-group">
-          <label>username</label>
-          <input type="text" id="login-user" value="admin" />
+          <label>email</label>
+          <input type="email" id="login-user" placeholder="admin@example.com" autocomplete="username" />
         </div>
         <div class="form-group">
           <label>password</label>
-          <input type="password" id="login-pass" placeholder="••••••••" />
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
         </div>
         <button class="btn-primary full-width" onclick="doLogin()">→ Login</button>
         <div class="login-back"><a onclick="showPage('home')">← Back to portfolio</a></div>
